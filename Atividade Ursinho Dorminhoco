@@ -4,19 +4,19 @@
 Servo servoDormindo;
 Servo servoAcordado;
 
-// Pino do sensor de som
+// Sensor de som
 int sensorSom = A0;
 
 // Variáveis
 int valorSom = 0;
+int mediaSom = 0;
 int angulo = 0;
 
 void setup() {
 
-  // Inicia monitor serial
   Serial.begin(9600);
 
-  // Define os pinos dos servos
+  // Pinos dos servos
   servoDormindo.attach(9);
   servoAcordado.attach(10);
 
@@ -27,24 +27,42 @@ void setup() {
 
 void loop() {
 
-  // Lê o sensor de som
-  valorSom = analogRead(sensorSom);
+  mediaSom = 0;
 
-  // Mostra valor no monitor serial
+  // Faz média do som
+  for (int i = 0; i < 10; i++) {
+    mediaSom += analogRead(sensorSom);
+    delay(2);
+  }
+
+  valorSom = mediaSom / 10;
+
   Serial.println(valorSom);
 
-  // Converte som em ângulo
-  angulo = map(valorSom, 200, 800, 0, 90);
+  // Silêncio
+  if (valorSom > 950) {
 
-  // Limita entre 0 e 90 graus
-  angulo = constrain(angulo, 0, 90);
+    angulo = 0;
 
-  // Servo dormindo abaixa com o barulho
-  servoDormindo.write(90 - angulo);
+  }
 
-  // Servo acordado levanta com o barulho
+  // Som médio
+  else if (valorSom > 850) {
+
+    angulo = 45;
+
+  }
+
+  // Muito barulho
+  else {
+
+    angulo = 90;
+
+  }
+
+  // Move os servos
+  servoDormindo.write(180 - angulo);
   servoAcordado.write(angulo);
 
-  // Pequena pausa
-  delay(100);
+  delay(150);
 }
