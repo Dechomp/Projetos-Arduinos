@@ -1,0 +1,50 @@
+#include <Servo.h>
+
+// Cria os servos
+Servo servoDormindo;
+Servo servoAcordado;
+
+// Pino do sensor de som
+int sensorSom = A0;
+
+// Variáveis
+int valorSom = 0;
+int angulo = 0;
+
+void setup() {
+
+  // Inicia monitor serial
+  Serial.begin(9600);
+
+  // Define os pinos dos servos
+  servoDormindo.attach(9);
+  servoAcordado.attach(10);
+
+  // Estado inicial
+  servoDormindo.write(90);
+  servoAcordado.write(0);
+}
+
+void loop() {
+
+  // Lê o sensor de som
+  valorSom = analogRead(sensorSom);
+
+  // Mostra valor no monitor serial
+  Serial.println(valorSom);
+
+  // Converte som em ângulo
+  angulo = map(valorSom, 200, 800, 0, 90);
+
+  // Limita entre 0 e 90 graus
+  angulo = constrain(angulo, 0, 90);
+
+  // Servo dormindo abaixa com o barulho
+  servoDormindo.write(90 - angulo);
+
+  // Servo acordado levanta com o barulho
+  servoAcordado.write(angulo);
+
+  // Pequena pausa
+  delay(100);
+}
