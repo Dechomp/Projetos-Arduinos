@@ -1,0 +1,11 @@
+int sensor = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valor = analogRead(sensor);
+
+  Serial.println(valor);
+}
