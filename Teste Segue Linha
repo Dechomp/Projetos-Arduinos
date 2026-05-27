@@ -1,0 +1,12 @@
+int sensor = 2;
+
+void setup() {
+  pinMode(sensor, INPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int valor = digitalRead(sensor);
+
+  Serial.println(valor);
+}
